@@ -1,0 +1,21 @@
+I'll start by auditing the environment read-only: listing `/app`, checking for input files, and checking the runtime.
+
+<｜｜DSML｜｜ calls>
+<｜｜DSML｜｜ invoke name="bash">
+<｜｜DSML｜｜ parameter name="command" string="true">ls -la /app 2>&1; echo "----EXIT:$?----"</｜｜DSML｜｜ parameter>
+</｜｜DSML｜｜ invoke>
+<｜｜DSML｜｜ invoke name="bash">
+<｜｜DSML｜｜ parameter name="command" string="true">echo "== pwd =="; pwd; echo "== python =="; (python3 --version 2>&1; which python3 2>&1); echo "== node =="; (node --version 2>&1; which node 2>&1); echo "== uname =="; uname -a 2>&1</｜｜DSML｜｜ parameter>
+</｜｜DSML｜｜ invoke>
+</｜｜DSML｜｜ calls>
+
+I'll start by auditing the environment read-only: listing `/app`, checking for input files, and checking the runtime.
+
+<｜｜DSML｜｜ calls>
+<｜｜DSML｜｜ invoke name="bash">
+<｜｜DSML｜｜ parameter name="command" string="true">ls -la /app 2>&1; echo "----EXIT:$?----"</｜｜DSML｜｜ parameter>
+</｜｜DSML｜｜ invoke>
+<｜｜DSML｜｜ invoke name="bash">
+<｜｜DSML｜｜ parameter name="command" string="true">echo "== pwd =="; pwd; echo "== python =="; (python3 --version 2>&1; which python3 2>&1); echo "== node =="; (node --version 2>&1; which node 2>&1); echo "== uname =="; uname -a 2>&1</｜｜DSML｜｜ parameter>
+</｜｜DSML｜｜ invoke>
+</｜｜DSML｜｜ calls>

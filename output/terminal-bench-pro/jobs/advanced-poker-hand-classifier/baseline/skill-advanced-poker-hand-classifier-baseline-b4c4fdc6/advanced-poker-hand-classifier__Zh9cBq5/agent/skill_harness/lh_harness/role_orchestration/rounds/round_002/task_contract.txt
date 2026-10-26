@@ -1,0 +1,17 @@
+Task contract:
+- Real target state: `/app/poker_results.txt` exists and contains exactly one line per authoritative input hand JSON file, in the format `{filename}|{ranking_name}|{score}|{best_hand}`. Valid hands: correct ranking name, exact 7-character Part B score, and the five substituted cards in standard rank+suit notation (wild tokens replaced by what they became). Invalid hands: `{filename}|invalid|0.00000|error: {reason}` per Part D.
+- Authoritative inputs: The real hand JSON files whose identity is still being resolved. Confirmed present: `/app/hand1.json`, `hand2.json`, `hand3.json` (round_001). Provisionally discovered but not yet confirmed authoritative: the 31 files under `/protected/test_data/` (round_001). Their contents are unverified; do not fabricate inputs.
+- State carrier: `/app/poker_results.txt` as consumed downstream. Stdout or a terminal transcript is not completion.
+- State-production process: A real classifier implementing Parts A–E, executed over the resolved authoritative input set, writing the results file by normal program execution.
+- Commit/persistence boundary: The results file must be written to `/app/poker_results.txt` and its final content read back and evidenced.
+- Candidate-selection and contamination boundary: If both `/app` and `/protected/test_data` inputs are authoritative, the output must contain one line per file across the union; prove `/app/poker_results.txt` corresponds to the complete, correct resolved input set and remove/overwrite stale candidates.
+- Acceptance constraints (from the request):
+  - Exact output path `/app/poker_results.txt` (Part C). Verify file exists there. Blocking.
+  - One line per authoritative input JSON file, four pipe-separated fields (Part C). Verify line count and fields match the resolved input set. Blocking.
+  - Exact score formats per Part B (10.RRRR0, 9.S0000, 8.HHHHS, 7.RRRRK, 6.TTTPP, 5.ABCDE, 4.HHHH0, 3.TTTK1K2, 2.HHLLKK, 1.PPKKK, 0.ABCDE). Blocking.
+  - All Part D invalid conditions produce `invalid|0.00000|error: {reason}`. Blocking.
+  - Wild substitution output shows substituted cards, not wild tokens (Part C). Blocking.
+  - Both encodings auto-detected (Part A). Blocking.
+  - Wild optimization priority: suit priority, natural over substituted, lexicographic determinism (Part E). Blocking.
+- Acceptable evidence: Final saved `/app/poker_results.txt` content checked line by line against the real resolved inputs, plus spot-checks on the Part F samples and on the edge-case inputs.
+- Unacceptable shortcuts: Hardcoding outputs by filename; writing results without running a real classifier; inventing input files; treating stdout as the deliverable; omitting `/protected/test_data` inputs if they are authoritative.

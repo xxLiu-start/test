@@ -1,0 +1,4 @@
+{"after": {"enable_thinking": true, "max_tokens": 65536, "model": "deepseek-v4.1-flash", "stream": true, "temperature": 1.0, "thinking": {"type": "adaptive"}, "top_k": 20, "top_p": 0.95}, "before": {"enable_thinking": null, "max_tokens": 32000, "model": "deepseek-v4.1-flash", "stream": true, "temperature": null, "thinking": {"type": "adaptive"}, "top_k": null, "top_p": null}, "event": "request", "path": "/v1/messages?beta=true", "upstream": "https://movoapi.top/v1/messages?beta=true"}
+{"bearer": true, "event": "forwarded_auth", "path": "/v1/messages?beta=true", "x_api_key": false}
+{"event": "openai_bridge_request", "messages": 3, "path": "/v1/messages?beta=true", "tools": 14, "upstream": "https://movoapi.top/v1/chat/completions"}
+{"content_types": ["text"], "event": "openai_bridge_response", "path": "/v1/messages?beta=true", "stop_reason": "end_turn"}

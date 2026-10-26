@@ -1,0 +1,53 @@
+# Evaluate the learned SkillBank on the original Terminal-Bench 2.1 test set.
+# The frozen eval/TB-harness configuration and dataset are not modified.
+job_name: lh-harness-skill-test-tb21
+jobs_dir: output/terminal-bench-2-1/jobs
+n_attempts: 3
+n_concurrent_trials: 16
+retry:
+  max_retries: 3
+environment:
+  type: docker
+agents:
+  - import_path: lh_harness.harbor_training:SkillLearningHarborAgent
+    model_name: deepseek-v4.1-flash
+    override_timeout_sec: 18000
+    override_setup_timeout_sec: 18000
+    include_logs:
+      - skill_harness/**
+    env:
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY}
+      ANTHROPIC_BASE_URL: ${ANTHROPIC_BASE_URL}
+      LH_HARNESS_PROXY_BEARER_AUTH: "1"
+      LH_HARNESS_PROXY_OPENAI_BRIDGE: "1"
+      CUA_HARNESS_CLAUDE_CODE_VERSION: ${CLAUDE_CODE_VERSION:-2.1.176}
+      CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC: "1"
+    kwargs:
+      harness_model: deepseek-v4.1-flash
+      verifier_model: deepseek-v4.1-flash
+      workspace_path: /app
+      max_rounds: 25
+      episode_timeout_sec: 4200
+      cli_task_timeout_sec: 1800
+      orchestrator_timeout_sec: 600
+      verifier_timeout_sec: 600
+      max_turns: 200
+      orchestrator_max_turns: 200
+      verifier_max_turns: 200
+      max_tokens: 65536
+      temperature: 1.0
+      top_p: 0.95
+      top_k: 20
+      llm_call_kwargs:
+        extra_body:
+          enable_thinking: true
+      dashscope_wait_timeout_sec: 90
+      skill_bank_path: ${LH_SKILL_BANK_PATH}
+      prompt_language: en
+      skill_token_budget: 2000
+      skill_reward_reference_tokens: 100000
+      learning_enabled: false
+verifier:
+  override_timeout_sec: 18000
+datasets:
+  - path: eval/TB-harness/datasets/terminal-bench-2-1/tasks

@@ -1,0 +1,5 @@
+Current task state:
+Completed: Nothing yet. No auditor rounds exist; no facts are verified.
+Incomplete: All of the original request — the poker hand classifier, the wild-card substitution logic, the tiebreaker scoring, the JSON input discovery and parsing, and the final results file at /app/poker_results.txt.
+Blockers/Risks: The task assumes input JSON hand files exist somewhere under /app and that the output must be exactly one line per input JSON file. Neither the input directory nor the input filenames have been observed. The request also embeds a hand2 example that contradicts itself internally (it repeats 7H and then labels that a phantom duplicate), so the exact expected text for wild-card best_hand output is not trustworthy as a literal target; it must be resolved by the scoring and substitution rules, not copied verbatim. The task contract is still unverified against the real environment.
+Untrusted/Do not reuse: Any assumption about which hand files are present, their contents, their container format (a root array vs an object with a hand field), or whether a classifier already exists. All unverified.

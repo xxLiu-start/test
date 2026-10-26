@@ -1,0 +1,170 @@
+{
+    "id": "c42f7ae0-7510-4be2-b0ac-4cc283316617",
+    "task_name": "advanced-poker-hand-classifier",
+    "trial_name": "advanced-poker-hand-classifier__uDAmj5X",
+    "trial_uri": "file:///data0/liuxule/project/LHH/LongHorizon-Harness/output/terminal-bench-pro/jobs/advanced-poker-hand-classifier/baseline/skill-advanced-poker-hand-classifier-baseline-e70f2fe2/advanced-poker-hand-classifier__uDAmj5X",
+    "task_id": {
+        "path": "/data0/liuxule/project/LHH/LongHorizon-Harness/train_dataset/terminal-bench-pro/advanced-poker-hand-classifier"
+    },
+    "source": "terminal-bench-pro",
+    "task_checksum": "8c896af936dbaf2279b9ada764fe382aa4cade692864ebbee40112bdc3a6072c",
+    "config": {
+        "task": {
+            "path": "/data0/liuxule/project/LHH/LongHorizon-Harness/train_dataset/terminal-bench-pro/advanced-poker-hand-classifier",
+            "git_url": null,
+            "git_commit_id": null,
+            "name": null,
+            "ref": null,
+            "overwrite": false,
+            "download_dir": null,
+            "source": "terminal-bench-pro"
+        },
+        "trial_name": "advanced-poker-hand-classifier__uDAmj5X",
+        "trials_dir": "/data0/liuxule/project/LHH/LongHorizon-Harness/output/terminal-bench-pro/jobs/advanced-poker-hand-classifier/baseline/skill-advanced-poker-hand-classifier-baseline-e70f2fe2",
+        "install_only": false,
+        "timeout_multiplier": 1.0,
+        "agent_timeout_multiplier": null,
+        "verifier_timeout_multiplier": null,
+        "agent_setup_timeout_multiplier": null,
+        "environment_build_timeout_multiplier": null,
+        "agent": {
+            "name": null,
+            "import_path": "lh_harness.harbor_training:SkillLearningHarborAgent",
+            "model_name": "deepseek-v4.1-flash",
+            "n_concurrent": null,
+            "concurrency_group": null,
+            "skills": [],
+            "override_timeout_sec": 18000.0,
+            "override_setup_timeout_sec": 18000.0,
+            "max_timeout_sec": null,
+            "extra_allowed_hosts": [],
+            "include_logs": [
+                "skill_harness/**"
+            ],
+            "kwargs": {
+                "harness_model": "deepseek-v4.1-flash",
+                "verifier_model": "deepseek-v4.1-flash",
+                "workspace_path": "/app",
+                "max_rounds": 25,
+                "episode_timeout_sec": 4200,
+                "cli_task_timeout_sec": 1800,
+                "orchestrator_timeout_sec": 600,
+                "verifier_timeout_sec": 600,
+                "max_turns": 200,
+                "orchestrator_max_turns": 200,
+                "verifier_max_turns": 200,
+                "max_tokens": 65536,
+                "temperature": 1.0,
+                "top_p": 0.95,
+                "top_k": 20,
+                "llm_call_kwargs": {
+                    "extra_body": {
+                        "enable_thinking": true
+                    }
+                },
+                "dashscope_wait_timeout_sec": 90,
+                "skill_bank_path": "/data0/liuxule/project/LHH/LongHorizon-Harness/output/terminal-bench-pro/jobs/advanced-poker-hand-classifier/bank_snapshot.json",
+                "prompt_language": "en",
+                "skill_token_budget": 2000,
+                "skill_reward_reference_tokens": 100000,
+                "learning_enabled": true
+            },
+            "env": {
+                "ANTHROPIC_API_KEY": "${ANTHROPIC_API_KEY}",
+                "ANTHROPIC_BASE_URL": "${ANTHROPIC_BASE_URL}",
+                "LH_HARNESS_PROXY_BEARER_AUTH": "****",
+                "CUA_HARNESS_CLAUDE_CODE_VERSION": "${CLAUDE_CODE_VERSION:-2.1.176}",
+                "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC": "1"
+            },
+            "mcp_servers": []
+        },
+        "environment": {
+            "type": "docker",
+            "import_path": null,
+            "force_build": false,
+            "delete": true,
+            "cpu_enforcement_policy": "auto",
+            "memory_enforcement_policy": "auto",
+            "override_cpus": null,
+            "override_memory_mb": null,
+            "override_storage_mb": null,
+            "override_gpus": null,
+            "override_tpu": null,
+            "mounts": null,
+            "extra_docker_compose": [],
+            "kwargs": {},
+            "extra_allowed_hosts": []
+        },
+        "verifier": {
+            "override_timeout_sec": 18000.0,
+            "max_timeout_sec": null,
+            "disable": false
+        },
+        "artifacts": [],
+        "extra_instruction_paths": [],
+        "job_id": "68766809-1163-48fb-8082-ea8895414204"
+    },
+    "agent_info": {
+        "name": "lh-harness-skill-learning",
+        "version": "0.1.0",
+        "model_info": {
+            "name": "deepseek-v4.1-flash",
+            "provider": null
+        }
+    },
+    "agent_result": {
+        "n_input_tokens": 59410,
+        "n_cache_tokens": 0,
+        "n_output_tokens": 9965,
+        "cost_usd": null,
+        "rollout_details": null,
+        "metadata": {
+            "variant": "lh_harness_skill_learning",
+            "dataset_split": "train",
+            "skill_bank_path": "/data0/liuxule/project/LHH/LongHorizon-Harness/output/terminal-bench-pro/jobs/advanced-poker-hand-classifier/bank_snapshot.json",
+            "model": "deepseek-v4.1-flash",
+            "verifier_model": "deepseek-v4.1-flash",
+            "workspace_path": "/app",
+            "elapsed_seconds": 117.023,
+            "completion_satisfied": false,
+            "status": "incomplete",
+            "skill_learning": {
+                "task_tokens": 63863,
+                "token_usage_missing": false,
+                "action": "NO_CHANGE",
+                "validation": "not_requested"
+            },
+            "usage_totals": {
+                "n_input_tokens": 59410,
+                "n_output_tokens": 9965,
+                "n_cache_tokens": 0
+            },
+            "report_path": "/data0/liuxule/project/LHH/LongHorizon-Harness/output/terminal-bench-pro/jobs/advanced-poker-hand-classifier/baseline/skill-advanced-poker-hand-classifier-baseline-e70f2fe2/advanced-poker-hand-classifier__uDAmj5X/agent/skill_harness/lh_harness/report.json"
+        }
+    },
+    "verifier_result": {
+        "rewards": {
+            "reward": 0.0
+        }
+    },
+    "exception_info": null,
+    "started_at": "2026-10-26T10:13:05.423879Z",
+    "finished_at": "2026-10-26T10:15:31.930561Z",
+    "environment_setup": {
+        "started_at": "2026-10-26T10:13:05.451792Z",
+        "finished_at": "2026-10-26T10:13:06.860285Z"
+    },
+    "agent_setup": {
+        "started_at": "2026-10-26T10:13:06.860403Z",
+        "finished_at": "2026-10-26T10:13:07.851279Z"
+    },
+    "agent_execution": {
+        "started_at": "2026-10-26T10:13:07.851530Z",
+        "finished_at": "2026-10-26T10:15:05.018116Z"
+    },
+    "verifier": {
+        "started_at": "2026-10-26T10:15:05.535408Z",
+        "finished_at": "2026-10-26T10:15:20.838080Z"
+    },
+    "step_results": null
+}

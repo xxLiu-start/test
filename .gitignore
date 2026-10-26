@@ -46,3 +46,6 @@ env.local.sh
 .idea/
 .vscode/
 .lh-harness-quickstart/
+
+# Skill learning and benchmark run artifacts
+# output/

@@ -524,7 +524,17 @@ Every run is stored in an isolated `runs/<run-id>/` directory. The complete task
 | 📁 **Workspace** | Files and artifacts produced during execution |
 | ✅ **Final report** | The verified outcome of the task |
 
-## Evaluation Reproduction
+## Prompt-driven Skill learning (optional)
+
+Use `--skill-bank /path/to/skillbank.json` to enable a persistent category-level SkillBank, multi-Skill routing before each Manager/Executor/Auditor call, and terminal trajectory analysis. `--skill-token-budget` sets the per-call incremental Skill context budget (default 2000). Route inputs, selections, and actual injections are written to `role_orchestration/skill_routes.json`; proposed candidates go to `role_orchestration/skill_candidate.json` and are reported under `skill_learning` in the final report.
+
+SkillBank runs currently use English role prompts, learning prompts, and Skill content only (`--prompt-language en`). Task text can remain in its original language.
+
+CLI candidates remain `pending_replay` because restoring an arbitrary workspace or external application requires environment-specific setup. Python callers can supply `manager.run(..., skill_replay=callback)` to perform a full task replay from the same initial state. The callback receives `{kind, candidate, mode}` and returns `report`, `task_tokens`, `effective`, `hard_constraint_regression`, and `skill_routes` for Skill validation. Pass `skill_candidate` or `skill_router_prompt_override` to `manager.run` for the respective replay. A candidate is committed only when it took effect, completed the task without a hard-constraint regression, and improved the fixed task reward using provider-reported token usage.
+
+The Terminal-Bench training workflow and unchanged test-set split are documented in [`training/README.md`](training/README.md): train on `train_dataset/terminal-bench-pro`, test on the original Terminal-Bench 2.1 tasks.
+
+## Evaluation reproductions
 
 `eval/` provides frozen reproduction suites for three benchmarks:
 

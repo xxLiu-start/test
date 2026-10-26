@@ -525,6 +525,20 @@ Dashboard 会展示每一轮的任务规划、执行结果、审计证据和返�
 | 📁 **工作区** | 执行过程中产生的文件和交付物 |
 | ✅ **最终报告** | 经过验证的任务结果 |
 
+## Prompt 驱动的 Skill 学习（可选）
+
+主实现可用 `--skill-bank /path/to/skillbank.json` 启用类别级 SkillBank、每次角色调用前的多 Skill Router，以及成功总结/失败诊断。`--skill-token-budget` 控制单次角色调用可注入的 Skill 上下文预算，默认 2000。SkillBank 不存在时从空库开始；只有通过验证的 Skill 才会持久化到库中。
+
+当前 Skill 学习流程只使用英文角色 Prompt、英文 Router/诊断/更新 Prompt 和英文 Skill；启用 `--skill-bank` 时必须使用 `--prompt-language en`。任务原文不需要翻译。
+
+每次调用的基础 Prompt、Router 输入与输出、允许候选、实际注入内容保存在运行日志的 `role_orchestration/skill_routes.json`。终态候选保存在 `role_orchestration/skill_candidate.json`，最终报告的 `skill_learning` 字段记录学习动作、Token 缺失情况和验证状态。空库或没有允许候选时跳过 Router，继续原始角色流程。
+
+候选验证需要恢复任务开始时的工作区、外部应用状态和模型/权限/预算。CLI 无法通用地恢复任意 GUI 或外部环境，因此 CLI 运行产生的候选保持 `pending_replay`，不会自动入库。调用 Python `manager.run(..., skill_replay=callback)` 可接入环境专用的完整任务重放器。回调接收 `{kind, candidate, mode}`，应在可比初始状态下重跑同一任务，并返回 `report`、`task_tokens`、`effective`、`hard_constraint_regression`，Skill 验证还要返回 `skill_routes` 以证明目标候选实际注入。`manager.run` 在 Skill 验证时可传 `skill_candidate`，在 Router 验证时可传 `skill_router_prompt_override`；验证运行本身不再触发学习。缺失真实 Token usage、候选未生效、任务未完成或奖励未提升都会拒绝提交。
+
+此功能只修改 `src/lh_harness/`，不修改 `eval/` 的冻结复现副本。
+
+训练/测试划分和完整任务候选重跑入口见 [`training/README.zh-CN.md`](training/README.zh-CN.md)：训练使用 `train_dataset/terminal-bench-pro`，测试仍使用原 Terminal-Bench 2.1 数据集。
+
 ## 评测复现
 
 `eval/` 提供三个固定版本的评测复现套件：

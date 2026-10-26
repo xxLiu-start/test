@@ -511,8 +511,26 @@ def main(argv: list[str] | None = None) -> int:
         "--prompt-language",
         choices=("en", "zh"),
         default=run_default("prompt_language", "en"),
-        help="Language for manager/executor/auditor prompts.",
+        help="Language for manager/executor/auditor prompts. SkillBank runs require en.",
     )
+    run_parser.add_argument(
+        "--skill-bank",
+        default=run_default("skill_bank"),
+        help="Enable prompt-driven Skill routing and learning with a persistent SkillBank JSON path.",
+    )
+    run_parser.add_argument(
+        "--skill-token-budget", type=int, default=2000,
+        help="Maximum approximate incremental Skill context tokens per role call.",
+    )
+    run_parser.add_argument(
+        "--skill-benchmark-id", choices=("generic", "weavebench", "osworld_v2", "terminal_bench_2_1"),
+        default="generic", help="Benchmark scope for Skill eligibility.",
+    )
+    run_parser.add_argument(
+        "--skill-interaction-mode", choices=("gui", "cli", "hybrid"),
+        default="hybrid", help="Interaction modality for Skill eligibility.",
+    )
+    run_parser.add_argument("--skill-dataset-id", default="", help="Dataset provenance for Skill evidence.")
     # One entry per agent, each in that agent's own format: no translation.
     run_parser.add_argument(
         "--claude-mcp-config",
@@ -1461,6 +1479,9 @@ async def _run_with_attached_control(
 
 
 def _run_command(args: argparse.Namespace) -> int:
+    if getattr(args, "skill_bank", None) and args.prompt_language != "en":
+        print("Cannot start run: SkillBank requires --prompt-language en", file=sys.stderr)
+        return 2
     # The agents work in the directory lh-harness was started from, so a task acts
     # on the user's real project by default. Resolve it before touching the disk:
     # every other path below is relative to it.
@@ -1631,6 +1652,11 @@ def _run_command(args: argparse.Namespace) -> int:
         harness_dir=harness_dir,
         log_dir=log_dir,
         prompt_language=args.prompt_language,
+        skill_bank_path=getattr(args, "skill_bank", None),
+        skill_token_budget=getattr(args, "skill_token_budget", 2000),
+        skill_benchmark_id=getattr(args, "skill_benchmark_id", "generic"),
+        skill_interaction_mode=getattr(args, "skill_interaction_mode", "hybrid"),
+        skill_dataset_id=getattr(args, "skill_dataset_id", ""),
     )
     env = _build_env(args.env, tmp_dir=str(run_dir / "tmp"))
 

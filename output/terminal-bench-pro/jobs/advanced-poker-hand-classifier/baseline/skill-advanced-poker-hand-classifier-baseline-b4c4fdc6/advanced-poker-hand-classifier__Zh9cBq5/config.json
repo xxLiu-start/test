@@ -1,0 +1,57 @@
+{
+    "task": {
+        "path": "/data0/liuxule/project/LHH/LongHorizon-Harness/train_dataset/terminal-bench-pro/advanced-poker-hand-classifier",
+        "source": "terminal-bench-pro"
+    },
+    "trial_name": "advanced-poker-hand-classifier__Zh9cBq5",
+    "trials_dir": "/data0/liuxule/project/LHH/LongHorizon-Harness/output/terminal-bench-pro/jobs/advanced-poker-hand-classifier/baseline/skill-advanced-poker-hand-classifier-baseline-b4c4fdc6",
+    "agent": {
+        "import_path": "lh_harness.harbor_training:SkillLearningHarborAgent",
+        "model_name": "deepseek-v4.1-flash",
+        "override_timeout_sec": 18000.0,
+        "override_setup_timeout_sec": 18000.0,
+        "include_logs": [
+            "skill_harness/**"
+        ],
+        "kwargs": {
+            "harness_model": "deepseek-v4.1-flash",
+            "verifier_model": "deepseek-v4.1-flash",
+            "workspace_path": "/app",
+            "max_rounds": 25,
+            "episode_timeout_sec": 4200,
+            "cli_task_timeout_sec": 1800,
+            "orchestrator_timeout_sec": 600,
+            "verifier_timeout_sec": 600,
+            "max_turns": 200,
+            "orchestrator_max_turns": 200,
+            "verifier_max_turns": 200,
+            "max_tokens": 65536,
+            "temperature": 1.0,
+            "top_p": 0.95,
+            "top_k": 20,
+            "llm_call_kwargs": {
+                "extra_body": {
+                    "enable_thinking": true
+                }
+            },
+            "dashscope_wait_timeout_sec": 90,
+            "skill_bank_path": "/data0/liuxule/project/LHH/LongHorizon-Harness/output/terminal-bench-pro/jobs/advanced-poker-hand-classifier/bank_snapshot.json",
+            "prompt_language": "en",
+            "skill_token_budget": 2000,
+            "skill_reward_reference_tokens": 100000,
+            "learning_enabled": true
+        },
+        "env": {
+            "ANTHROPIC_API_KEY": "${ANTHROPIC_API_KEY}",
+            "ANTHROPIC_BASE_URL": "${ANTHROPIC_BASE_URL}",
+            "LH_HARNESS_PROXY_BEARER_AUTH": "****",
+            "LH_HARNESS_PROXY_OPENAI_BRIDGE": "1",
+            "CUA_HARNESS_CLAUDE_CODE_VERSION": "${CLAUDE_CODE_VERSION:-2.1.176}",
+            "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC": "1"
+        }
+    },
+    "verifier": {
+        "override_timeout_sec": 18000.0
+    },
+    "job_id": "761e919a-b412-4a2c-a735-f027e9a6a2ea"
+}

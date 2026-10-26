@@ -445,6 +445,7 @@ class HarborClaudeCodeEpisodeAdapter:
         ready_file = shlex.quote(f"{remote_dir}/request_proxy.env")
         log_file = shlex.quote(f"{remote_dir}/request_proxy.log")
         requests_log_file = shlex.quote(f"{remote_dir}/request_proxy_requests.jsonl")
+        model_io_file = shlex.quote(f"{remote_dir}/model_io.jsonl")
         proxy_script = shlex.quote(CLAUDE_CODE_PROXY_REMOTE)
         dashscope_wait_timeout_arg = ""
         if self.dashscope_wait_timeout_sec is not None and self.dashscope_wait_timeout_sec > 0:
@@ -467,6 +468,7 @@ class HarborClaudeCodeEpisodeAdapter:
             '--ready-file "$proxy_ready" '
             '--log-file "$proxy_log" '
             '--requests-log-file "$proxy_requests_log" '
+            f'--model-io-file {model_io_file} '
             '--overrides "$CUA_HARNESS_CLAUDECODE_REQUEST_OVERRIDES" '
             f"{dashscope_wait_timeout_arg}"
             '& proxy_pid=$!; '
@@ -496,6 +498,11 @@ class HarborClaudeCodeEpisodeAdapter:
                 "request_proxy.env",
                 None,
             ),
+            (
+                "model_io.jsonl",
+                "model_io.jsonl",
+                None,
+            ),
         ]
         downloaded: dict[str, str] = {}
         for remote_name, local_name, aggregate_name in files:
@@ -522,6 +529,11 @@ class HarborClaudeCodeEpisodeAdapter:
                 )
                 continue
             downloaded[local_name] = str(local_path)
+            if local_name == "model_io.jsonl":
+                try:
+                    local_path.chmod(0o600)
+                except OSError:
+                    pass  # Viewing-only trace permissions must not fail a trial.
             if aggregate_name is not None:
                 self._append_local_log(local_path, self.output_dir / aggregate_name)
                 if self.output_dir.parent != self.output_dir:

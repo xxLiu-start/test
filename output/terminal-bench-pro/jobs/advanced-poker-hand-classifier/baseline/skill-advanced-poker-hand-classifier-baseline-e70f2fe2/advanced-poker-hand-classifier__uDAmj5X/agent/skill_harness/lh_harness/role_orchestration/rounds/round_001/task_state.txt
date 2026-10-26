@@ -1,0 +1,5 @@
+Current task state:
+Completed: nothing verified (no auditor rounds yet).
+Incomplete: classifier implementation, input discovery, `/app/poker_results.txt` output, validation handling, wild-card optimization, and both encoding formats are all unverified.
+Blockers/Risks: authoritative input set is unknown (file names, directory, number of hands, or whether numeric encoding files exist); no verified environment facts about `/app`; spec has internal inconsistencies (hand2's "phantom duplicate" note conflicts with validation rule 9, JR/JB invalidity rule 4/5 wording is ambiguous, Five-of-a-Kind/natural-card priority ordering is underspecified); "best_hand" ordering and suit selection for substitutions are not fully pinned down. All unverified.
+Untrusted/Do not reuse: any claim that files exist in `/app`, any claim an implementation exists, any claim output was produced.

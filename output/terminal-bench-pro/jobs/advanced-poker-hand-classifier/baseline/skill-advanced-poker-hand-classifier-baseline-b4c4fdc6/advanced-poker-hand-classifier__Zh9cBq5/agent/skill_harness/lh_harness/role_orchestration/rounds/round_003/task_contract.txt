@@ -1,0 +1,10 @@
+Task contract:
+- Real target state: `/app/poker_results.txt` exists with exactly one line per authoritative input hand file, format `{filename}|{ranking_name}|{score}|{best_hand}`; valid hands carry the correct ranking name, exact 7-character Part B score, and the five substituted cards; invalid hands carry `{filename}|invalid|0.00000|error: {reason}` per Part D.
+- Authoritative inputs: The 34 hand JSON files (3 in `/app` + 31 in `/protected/test_data`), pending a user decision on scope; contents are verified (round_002) and must not be altered or fabricated.
+- State carrier: `/app/poker_results.txt`, as consumed downstream. Stdout is not completion.
+- State-production process: A real classifier implementing Parts A–E, executed over the resolved authoritative input set, writing the results file by normal program execution.
+- Commit/persistence boundary: `/app/poker_results.txt` written and read back in full as evidence.
+- Candidate-selection and contamination boundary: Output must correspond exactly to the resolved input set; if the union is authoritative, one line per all 34 files with no duplicates or omissions; stale candidates removed or overwritten.
+- Acceptance constraints: exact path (Part C, blocking); one line per authoritative file with four pipe fields (blocking); exact Part B score formats (blocking); all Part D invalid outputs (blocking); substituted cards shown instead of wild tokens (blocking); both encodings auto-detected — numeric format must be handled, `hand23.json` alone is the on-disk numeric case (Part A, blocking); wild optimization priority suit>natural>lexicographic (Part E, blocking).
+- Acceptable evidence: Full final content of `/app/poker_results.txt` checked line by line against the verified input set, plus spot-checks on Part F samples and the Part D edge cases.
+- Unacceptable shortcuts: Hardcoded per-filename outputs; writing results without running a real classifier; inventing inputs; treating stdout as the deliverable; silently dropping either input set.

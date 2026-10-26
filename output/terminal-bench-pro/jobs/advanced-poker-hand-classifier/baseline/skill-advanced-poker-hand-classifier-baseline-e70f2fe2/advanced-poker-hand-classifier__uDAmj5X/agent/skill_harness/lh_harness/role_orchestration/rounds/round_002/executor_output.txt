@@ -1,0 +1,17 @@
+I'll start by verifying the environment with explicit capture of every command's output and exit code.
+
+<｜｜DSML｜｜ calls>
+<｜｜DSML｜｜ invoke name="shell">
+<｜｜DSML｜｜ parameter name="command" string="true">echo "=== CMD: pwd ==="; pwd; echo "exit=$?"; echo "=== CMD: ls -la /app ==="; ls -la /app; echo "exit=$?"</｜｜DSML｜｜ parameter>
+<｜｜DSML｜｜ parameter name="description" string="true">Print working dir and list /app</｜｜DSML｜｜ parameter>
+</｜｜DSML｜｜ invoke>
+</｜｜DSML｜｜ calls>
+
+I'll start by verifying the environment with explicit capture of every command's output and exit code.
+
+<｜｜DSML｜｜ calls>
+<｜｜DSML｜｜ invoke name="shell">
+<｜｜DSML｜｜ parameter name="command" string="true">echo "=== CMD: pwd ==="; pwd; echo "exit=$?"; echo "=== CMD: ls -la /app ==="; ls -la /app; echo "exit=$?"</｜｜DSML｜｜ parameter>
+<｜｜DSML｜｜ parameter name="description" string="true">Print working dir and list /app</｜｜DSML｜｜ parameter>
+</｜｜DSML｜｜ invoke>
+</｜｜DSML｜｜ calls>

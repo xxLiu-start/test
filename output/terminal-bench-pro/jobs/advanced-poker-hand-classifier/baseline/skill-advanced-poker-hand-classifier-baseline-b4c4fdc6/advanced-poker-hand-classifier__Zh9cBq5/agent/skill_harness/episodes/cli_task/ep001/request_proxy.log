@@ -1,0 +1,14 @@
+[claude-code-proxy] listening on 127.0.0.1:33697, upstream=https://movoapi.top, dashscope_wait_timeout=90
+[claude-code-proxy] "HEAD / HTTP/1.1" 200 -
+[claude-code-proxy] forwarding POST /v1/messages?beta=true
+[claude-code-proxy] rewrote request body for /v1/messages?beta=true
+[claude-code-proxy] "POST /v1/messages?beta=true HTTP/1.1" 200 -
+[claude-code-proxy] forwarding POST /v1/messages?beta=true
+[claude-code-proxy] rewrote request body for /v1/messages?beta=true
+[claude-code-proxy] "POST /v1/messages?beta=true HTTP/1.1" 200 -
+[claude-code-proxy] forwarding POST /v1/messages?beta=true
+[claude-code-proxy] rewrote request body for /v1/messages?beta=true
+[claude-code-proxy] "POST /v1/messages?beta=true HTTP/1.1" 200 -
+[claude-code-proxy] forwarding POST /v1/messages?beta=true
+[claude-code-proxy] rewrote request body for /v1/messages?beta=true
+[claude-code-proxy] "POST /v1/messages?beta=true HTTP/1.1" 200 -

@@ -1,0 +1,24 @@
+Task contract:
+Target state: a working Advanced Poker Hand Classifier exists in the environment that reads the authoritative input hands (JSON files, standard and/or numeric encoding, auto-detected) and writes `/app/poker_results.txt`, one line per input file in the exact form `{filename}|{ranking_name}|{score}|{best_hand}`, with invalid hands as `{filename}|invalid|0.00000|error: {reason}`. All 11 rankings and exact score encodings, wild-card semantics (JK/JR/JB/W[n]), ace duality, optimization priorities, deterministic tie-breaking, and all nine validation rules are implemented as specified.
+
+Authoritative inputs: the JSON hand files actually present in the real environment (inventory/path unverified per round_001 and round_002; `/app` is the presumed working location because the output is `/app/poker_results.txt` and Part F names `hand1.json`, `hand2.json`, `hand3.json`, `hand_error.json`). Inputs must be discovered from the real environment, never invented.
+
+State carrier: the file `/app/poker_results.txt`, consumed directly by the user. Completion requires that exact path to exist with correct content for every authoritative input hand.
+
+State-production process: normal code authoring (CLI) plus execution of the classifier over the real inputs. No forged output file, no hand-written result lines.
+
+Commit/persistence boundary: `/app/poker_results.txt` must be written/overwritten by the classifier run itself, from the final code version, not by an editor paste.
+
+Acceptance constraints (source → condition → verification → blocking):
+1. Output path exact `/app/poker_results.txt` (Part C) → read that path → blocking if missing or elsewhere.
+2. Line format `filename|ranking|score|best_hand` with required score digit patterns (Part C) → parse every line → blocking on malformed lines.
+3. All 11 rankings and exact score encodings (Part B) → verify against Part F samples plus constructed cases → blocking.
+4. Wild-card rules JK/JR/JB/W[n] and invalidity 4–6 (Parts A, D, E) → targeted cases (5×JK→9.40000, 5×JR→9.30000, 5×JB→9.40000, W2, W14) → blocking.
+5. All nine validation rules with exact `error: {reason}` output (Part D) → invalid-sample cases → blocking.
+6. Auto-detection of standard vs numeric encoding (Part A) → feed both encodings → blocking.
+7. Part F samples hand1/hand2/hand3 reproduced exactly (blocking), except hand2's contradictory "phantom duplicate" annotation, which is an open clarification item and must not be silently resolved.
+8. Ace duality / A-low straight scoring (Part E) → A-2-3-4-5 case → blocking.
+9. Optimization priorities and deterministic tie-breaking (Part E.1) → mixed-wild and multi-optimal cases → blocking.
+10. Inputs not modified or fabricated → compare input inventory before/after → blocking.
+
+Unacceptable shortcuts: hardcoding Part F outputs; producing `/app/poker_results.txt` by any means other than running the classifier; skipping numeric-encoding support; try/except invalid handling without exact reasons; inventing input files.

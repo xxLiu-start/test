@@ -1,0 +1,46 @@
+{
+  "status": "done",
+  "error": null,
+  "duration_ms": 5548,
+  "metadata": {
+    "agent_done": true,
+    "role": "cli_task",
+    "episode_dir": "/data0/liuxule/project/LHH/LongHorizon-Harness/output/terminal-bench-pro/jobs/advanced-poker-hand-classifier/baseline/skill-advanced-poker-hand-classifier-baseline-e70f2fe2/advanced-poker-hand-classifier__uDAmj5X/agent/skill_harness/episodes/cli_task/ep001",
+    "prompt_path": "/data0/liuxule/project/LHH/LongHorizon-Harness/output/terminal-bench-pro/jobs/advanced-poker-hand-classifier/baseline/skill-advanced-poker-hand-classifier-baseline-e70f2fe2/advanced-poker-hand-classifier__uDAmj5X/agent/skill_harness/episodes/cli_task/ep001/prompt.md",
+    "agent_log_path": "/data0/liuxule/project/LHH/LongHorizon-Harness/output/terminal-bench-pro/jobs/advanced-poker-hand-classifier/baseline/skill-advanced-poker-hand-classifier-baseline-e70f2fe2/advanced-poker-hand-classifier__uDAmj5X/agent/skill_harness/episodes/cli_task/ep001/agent.log",
+    "claude_stream_path": "/data0/liuxule/project/LHH/LongHorizon-Harness/output/terminal-bench-pro/jobs/advanced-poker-hand-classifier/baseline/skill-advanced-poker-hand-classifier-baseline-e70f2fe2/advanced-poker-hand-classifier__uDAmj5X/agent/skill_harness/episodes/cli_task/ep001/claude_stream.jsonl",
+    "exit_code": 0,
+    "steps_capped": false,
+    "runtime_signals": [],
+    "assistant_visible_output": "I'll start by auditing the environment read-only: listing `/app`, checking for input files, and checking the runtime.\n\n<｜｜DSML｜｜ calls>\n<｜｜DSML｜｜ invoke name=\"bash\">\n<｜｜DSML｜｜ parameter name=\"command\" string=\"true\">ls -la /app 2>&1; echo \"----EXIT:$?----\"</｜｜DSML｜｜ parameter>\n</｜｜DSML｜｜ invoke>\n<｜｜DSML｜｜ invoke name=\"bash\">\n<｜｜DSML｜｜ parameter name=\"command\" string=\"true\">echo \"== pwd ==\"; pwd; echo \"== python ==\"; (python3 --version 2>&1; which python3 2>&1); echo \"== node ==\"; (node --version 2>&1; which node 2>&1); echo \"== uname ==\"; uname -a 2>&1</｜｜DSML｜｜ parameter>\n</｜｜DSML｜｜ invoke>\n</｜｜DSML｜｜ calls>\n\nI'll start by auditing the environment read-only: listing `/app`, checking for input files, and checking the runtime.\n\n<｜｜DSML｜｜ calls>\n<｜｜DSML｜｜ invoke name=\"bash\">\n<｜｜DSML｜｜ parameter name=\"command\" string=\"true\">ls -la /app 2>&1; echo \"----EXIT:$?----\"</｜｜DSML｜｜ parameter>\n</｜｜DSML｜｜ invoke>\n<｜｜DSML｜｜ invoke name=\"bash\">\n<｜｜DSML｜｜ parameter name=\"command\" string=\"true\">echo \"== pwd ==\"; pwd; echo \"== python ==\"; (python3 --version 2>&1; which python3 2>&1); echo \"== node ==\"; (node --version 2>&1; which node 2>&1); echo \"== uname ==\"; uname -a 2>&1</｜｜DSML｜｜ parameter>\n</｜｜DSML｜｜ invoke>\n</｜｜DSML｜｜ calls>",
+    "output_text": "I'll start by auditing the environment read-only: listing `/app`, checking for input files, and checking the runtime.\n\n<｜｜DSML｜｜ calls>\n<｜｜DSML｜｜ invoke name=\"bash\">\n<｜｜DSML｜｜ parameter name=\"command\" string=\"true\">ls -la /app 2>&1; echo \"----EXIT:$?----\"</｜｜DSML｜｜ parameter>\n</｜｜DSML｜｜ invoke>\n<｜｜DSML｜｜ invoke name=\"bash\">\n<｜｜DSML｜｜ parameter name=\"command\" string=\"true\">echo \"== pwd ==\"; pwd; echo \"== python ==\"; (python3 --version 2>&1; which python3 2>&1); echo \"== node ==\"; (node --version 2>&1; which node 2>&1); echo \"== uname ==\"; uname -a 2>&1</｜｜DSML｜｜ parameter>\n</｜｜DSML｜｜ invoke>\n</｜｜DSML｜｜ calls>\n\nI'll start by auditing the environment read-only: listing `/app`, checking for input files, and checking the runtime.\n\n<｜｜DSML｜｜ calls>\n<｜｜DSML｜｜ invoke name=\"bash\">\n<｜｜DSML｜｜ parameter name=\"command\" string=\"true\">ls -la /app 2>&1; echo \"----EXIT:$?----\"</｜｜DSML｜｜ parameter>\n</｜｜DSML｜｜ invoke>\n<｜｜DSML｜｜ invoke name=\"bash\">\n<｜｜DSML｜｜ parameter name=\"command\" string=\"true\">echo \"== pwd ==\"; pwd; echo \"== python ==\"; (python3 --version 2>&1; which python3 2>&1); echo \"== node ==\"; (node --version 2>&1; which node 2>&1); echo \"== uname ==\"; uname -a 2>&1</｜｜DSML｜｜ parameter>\n</｜｜DSML｜｜ invoke>\n</｜｜DSML｜｜ calls>",
+    "actions_log_truncated": false,
+    "model": "deepseek-v4.1-flash",
+    "effort": null,
+    "sampling_config": {
+      "enable_thinking": true,
+      "temperature": 1.0,
+      "top_p": 0.95,
+      "top_k": 20,
+      "max_tokens": 65536
+    },
+    "proxy_log_paths": {
+      "request_proxy.log": "/data0/liuxule/project/LHH/LongHorizon-Harness/output/terminal-bench-pro/jobs/advanced-poker-hand-classifier/baseline/skill-advanced-poker-hand-classifier-baseline-e70f2fe2/advanced-poker-hand-classifier__uDAmj5X/agent/skill_harness/episodes/cli_task/ep001/request_proxy.log",
+      "request_proxy_requests.jsonl": "/data0/liuxule/project/LHH/LongHorizon-Harness/output/terminal-bench-pro/jobs/advanced-poker-hand-classifier/baseline/skill-advanced-poker-hand-classifier-baseline-e70f2fe2/advanced-poker-hand-classifier__uDAmj5X/agent/skill_harness/episodes/cli_task/ep001/request_proxy_requests.jsonl",
+      "request_proxy.env": "/data0/liuxule/project/LHH/LongHorizon-Harness/output/terminal-bench-pro/jobs/advanced-poker-hand-classifier/baseline/skill-advanced-poker-hand-classifier-baseline-e70f2fe2/advanced-poker-hand-classifier__uDAmj5X/agent/skill_harness/episodes/cli_task/ep001/request_proxy.env"
+    },
+    "n_input_tokens": 7407,
+    "n_output_tokens": 178,
+    "n_cache_tokens": 0
+  },
+  "live_trajectory_preserved": false,
+  "trajectory_truncated": false,
+  "trajectory_artifacts": {
+    "normalized_trajectory": "executor_trajectory.jsonl",
+    "screenshot_manifest": "executor_screenshots.json",
+    "screenshot_count": 0,
+    "total_screenshot_bytes": 0,
+    "screenshots": [],
+    "episode_dir": "/data0/liuxule/project/LHH/LongHorizon-Harness/output/terminal-bench-pro/jobs/advanced-poker-hand-classifier/baseline/skill-advanced-poker-hand-classifier-baseline-e70f2fe2/advanced-poker-hand-classifier__uDAmj5X/agent/skill_harness/lh_harness/cli_executor_episodes/ep001"
+  }
+}

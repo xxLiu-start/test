@@ -1,0 +1,7 @@
+{
+  "task": "advanced-poker-hand-classifier",
+  "training_dataset": "/data0/liuxule/project/LHH/LongHorizon-Harness/train_dataset/terminal-bench-pro",
+  "baseline_status": "incomplete",
+  "accepted": false,
+  "reason": "no candidate proposed"
+}

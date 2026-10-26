@@ -128,7 +128,7 @@ class CuaHarnessClaudeCodeAgent(BaseAgent):
         # below (and in subclasses) would then raise ``AttributeError``. Store it
         # explicitly so env-driven configuration works regardless of the Harbor
         # version in the environment.
-        self.extra_env = dict(extra_env or {})
+        self._extra_env = dict(extra_env or {})
 
         default_config = HarnessConfig()
         self._api_key = api_key

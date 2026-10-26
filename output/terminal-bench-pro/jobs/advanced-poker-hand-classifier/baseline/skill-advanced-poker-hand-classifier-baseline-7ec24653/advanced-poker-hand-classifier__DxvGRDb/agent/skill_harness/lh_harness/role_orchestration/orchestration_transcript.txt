@@ -1,0 +1,14 @@
+--- Round 1: blocked ---
+稳定任务契约 / Stable task contract:
+(无 / none)
+任务管理器子任务:
+Next: blocked
+
+Reason:
+Agent provider 启动或运行失败：API Error: 502 OpenAI bridge failed: ValueError: unsupported message role: system. This is a server-side issue, usually temporary — try again in a moment. If it persists, check your inference gateway (127.0.0.1:44407).
+executor agent 输出:
+(无)
+auditor 自然语言审计报告:
+(无)
+harness 任务管理反馈:
+Agent provider 启动或运行失败：API Error: 502 OpenAI bridge failed: ValueError: unsupported message role: system. This is a server-side issue, usually temporary — try again in a moment. If it persists, check your inference gateway (127.0.0.1:44407).

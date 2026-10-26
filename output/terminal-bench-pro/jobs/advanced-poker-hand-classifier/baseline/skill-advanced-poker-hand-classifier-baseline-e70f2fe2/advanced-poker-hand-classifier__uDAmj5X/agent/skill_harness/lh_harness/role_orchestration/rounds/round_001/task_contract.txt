@@ -1,0 +1,24 @@
+Task contract:
+Target state: a working Advanced Poker Hand Classifier exists in the environment that reads the authoritative input hands (JSON files, in standard and/or numeric encoding, auto-detected) and writes `/app/poker_results.txt`, one line per input file in the exact form `{filename}|{ranking_name}|{score}|{best_hand}`, with invalid hands emitted as `{filename}|invalid|0.00000|error: {reason}`. Rankings, score formats, wild-card semantics (JK/JR/JB/W[n]), ace duality, optimization priorities, and all nine validation rules are implemented as specified.
+
+Authoritative inputs: the JSON hand files in the real environment (path and inventory unverified; the original request names `/app/poker_results.txt` as output and shows `hand1.json`, `hand2.json`, `hand3.json`, `hand_error.json` as examples). Input files must be discovered from the real environment, not invented. Ambiguous spec points listed under Blockers must be resolved from evidence or user clarification, not guessed silently.
+
+State carrier: the file `/app/poker_results.txt`, consumed directly by the user. Completion requires that file to exist at that exact path with correct content for every authoritative input hand.
+
+State-production process: normal code authoring plus execution of the classifier (CLI) over the real inputs. No forged output file, no hand-written result lines.
+
+Commit/persistence boundary: the output file must be written/overwritten by the classifier run itself, not by an editor paste; content must correspond to the final code version.
+
+Acceptance constraints (source → condition → verification → blocking):
+1. Output path exact `/app/poker_results.txt` (Part C) → verify by reading the file at that path → blocking if missing or elsewhere.
+2. Line format `filename|ranking|score|best_hand` (Part C) → verify each line parses into exactly the four fields with required score digit patterns → blocking on any malformed line.
+3. All 11 rankings and exact score encodings (Part B) → verify against the Part F samples and additional constructed cases → blocking.
+4. Wild-card rules JK/JR/JB/W[n] including invalidity conditions 4–6 (Parts A, D, E) → verify by targeted cases (e.g. 5×JK → 9.40000, 5×JR → 9.30000, 5×JB → 9.40000, W2, W14) → blocking.
+5. All nine validation rules with exact `error: {reason}` output (Part D) → verify by invalid-sample cases → blocking.
+6. Auto-detection of standard vs numeric encoding (Part A) → verify by feeding both encodings → blocking.
+7. Sample expectations hand1/hand2/hand3 (Part F) reproduced exactly → blocking, except where Part F's contradictory annotation (hand2 duplicate note) is resolved by clarification.
+8. Ace duality and A-low straight scoring (Part E) → verify by A-2-3-4-5 case → blocking.
+9. Optimization priorities and deterministic tie-breaking (Part E.1) → verify by mixed-wild and multi-optimal cases → blocking.
+10. Do not modify or fabricate inputs (contract rule) → verify input file inventory unchanged before/after → blocking.
+
+Unacceptable shortcuts: hardcoding the Part F sample outputs; producing `/app/poker_results.txt` by any means other than running the classifier; skipping numeric-encoding support; declaring invalid-input handling by try/except without exact reasons; inventing input files.

@@ -1,0 +1,38 @@
+{
+  "status": "error",
+  "error": "",
+  "duration_ms": 185230,
+  "role": "manager",
+  "source_round": "round_001",
+  "metadata": {
+    "agent_done": false,
+    "role": "orchestrator",
+    "episode_dir": "/data0/liuxule/project/LHH/LongHorizon-Harness/output/terminal-bench-pro/jobs/advanced-poker-hand-classifier/baseline/skill-advanced-poker-hand-classifier-baseline-7ec24653/advanced-poker-hand-classifier__DxvGRDb/agent/skill_harness/episodes/orchestrator/ep001",
+    "prompt_path": "/data0/liuxule/project/LHH/LongHorizon-Harness/output/terminal-bench-pro/jobs/advanced-poker-hand-classifier/baseline/skill-advanced-poker-hand-classifier-baseline-7ec24653/advanced-poker-hand-classifier__DxvGRDb/agent/skill_harness/episodes/orchestrator/ep001/prompt.md",
+    "agent_log_path": "/data0/liuxule/project/LHH/LongHorizon-Harness/output/terminal-bench-pro/jobs/advanced-poker-hand-classifier/baseline/skill-advanced-poker-hand-classifier-baseline-7ec24653/advanced-poker-hand-classifier__DxvGRDb/agent/skill_harness/episodes/orchestrator/ep001/agent.log",
+    "claude_stream_path": "/data0/liuxule/project/LHH/LongHorizon-Harness/output/terminal-bench-pro/jobs/advanced-poker-hand-classifier/baseline/skill-advanced-poker-hand-classifier-baseline-7ec24653/advanced-poker-hand-classifier__DxvGRDb/agent/skill_harness/episodes/orchestrator/ep001/claude_stream.jsonl",
+    "exit_code": 1,
+    "steps_capped": false,
+    "runtime_signals": [],
+    "assistant_visible_output": "API Error: 502 OpenAI bridge failed: ValueError: unsupported message role: system. This is a server-side issue, usually temporary — try again in a moment. If it persists, check your inference gateway (127.0.0.1:44407).\n\nAPI Error: 502 OpenAI bridge failed: ValueError: unsupported message role: system. This is a server-side issue, usually temporary — try again in a moment. If it persists, check your inference gateway (127.0.0.1:44407).",
+    "output_text": "API Error: 502 OpenAI bridge failed: ValueError: unsupported message role: system. This is a server-side issue, usually temporary — try again in a moment. If it persists, check your inference gateway (127.0.0.1:44407).\n\nAPI Error: 502 OpenAI bridge failed: ValueError: unsupported message role: system. This is a server-side issue, usually temporary — try again in a moment. If it persists, check your inference gateway (127.0.0.1:44407).",
+    "actions_log_truncated": false,
+    "model": "deepseek-v4.1-flash",
+    "effort": null,
+    "sampling_config": {
+      "enable_thinking": true,
+      "temperature": 1.0,
+      "top_p": 0.95,
+      "top_k": 20,
+      "max_tokens": 65536
+    },
+    "proxy_log_paths": {
+      "request_proxy.log": "/data0/liuxule/project/LHH/LongHorizon-Harness/output/terminal-bench-pro/jobs/advanced-poker-hand-classifier/baseline/skill-advanced-poker-hand-classifier-baseline-7ec24653/advanced-poker-hand-classifier__DxvGRDb/agent/skill_harness/episodes/orchestrator/ep001/request_proxy.log",
+      "request_proxy_requests.jsonl": "/data0/liuxule/project/LHH/LongHorizon-Harness/output/terminal-bench-pro/jobs/advanced-poker-hand-classifier/baseline/skill-advanced-poker-hand-classifier-baseline-7ec24653/advanced-poker-hand-classifier__DxvGRDb/agent/skill_harness/episodes/orchestrator/ep001/request_proxy_requests.jsonl",
+      "request_proxy.env": "/data0/liuxule/project/LHH/LongHorizon-Harness/output/terminal-bench-pro/jobs/advanced-poker-hand-classifier/baseline/skill-advanced-poker-hand-classifier-baseline-7ec24653/advanced-poker-hand-classifier__DxvGRDb/agent/skill_harness/episodes/orchestrator/ep001/request_proxy.env"
+    },
+    "n_input_tokens": 0,
+    "n_output_tokens": 0,
+    "n_cache_tokens": 0
+  }
+}

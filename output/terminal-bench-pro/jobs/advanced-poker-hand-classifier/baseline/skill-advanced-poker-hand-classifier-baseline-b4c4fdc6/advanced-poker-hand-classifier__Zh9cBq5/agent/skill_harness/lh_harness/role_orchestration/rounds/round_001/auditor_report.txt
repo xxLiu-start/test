@@ -1,0 +1,26 @@
+Status: incomplete
+Integrity: clean
+Contract audit: unknown
+
+## Audit facts
+
+This was a read-only discovery subtask. I independently re-ran the discovery and confirmed most of the executor's mechanical facts, but I found one material omission that undermines the subtask's central conclusion.
+
+Verified true (independently observed):
+- `/app` contains exactly three input files: `hand1.json` `["AS","KS","QS","JS","10S"]`, `hand2.json` `["7H","7D","7C","JK","JK"]`, `hand3.json` `["9C","9D","4H","4S","4C"]` — all root-level JSON arrays, all length 5, all standard encoding.
+- `/app/poker_results.txt` does not exist. No `*poker*` file, no classifier (`.py`/`.sh`/`.js`), and no test harness exist anywhere.
+- The `.harness_skill/orchestration/rounds/round_001/` files are harness bookkeeping, correctly excluded.
+- The executor's semantic characterizations are correct: hand1 is a Royal Flush in Spades (9.40000); hand3 is 4s full of 9s → 6.00409, matching the Part F sample.
+- hand2's contradiction note is a legitimate, correctly identified spec ambiguity.
+
+**Material discovery the executor missed (and mis-scoped):**
+A whole filesystem search reveals `/protected/test_data/` containing **31 additional hand JSON files** the executor never surfaced. It explicitly wrote "3 hand files … no hidden JSON beyond .harness_skill" and concluded "expected output line count: exactly 3." That conclusion is not supported:
+- `/protected/test_data/` holds `hand4.json`–`hand23.json` plus purpose-named edge cases: `hand_all_wild`, `hand_jr_invalid`, `hand_jb_invalid`, `hand_w5_constraint`, `hand_duplicate`, `hand_empty`, `hand_too_few`, `hand_too_many`, `hand_invalid_card`, `hand_royal_wild`, `hand_ace_low_wild`.
+- There is **no** `hand1/hand2/hand3.jso
+
+...[auditor report truncated 5567 chars; kept head and tail]...
+
+is unresolved.
+- Do NOT advance to implementation with a 3-line assumption. First resolve whether `/protected/test_data/*.json` is authoritative (union → 34 expected lines) or a decoy. Independent evidence strongly suggests the union: disjoint hand numbering (1–3 in `/app`, 4–23 + edge cases in `/protected`), and the edge cases the spec mandates live only in `/protected`.
+- Recommend re-audit of input-set identity (a tight CLI discovery round that inventories `/protected/test_data` explicitly) or a manager `Next: ask` if the decoy-vs-union question cannot be settled from evidence.
+- Untrusted artifacts: the "exactly 3 files" discovery conclusion. Still-trusted state: `/app` hand contents, absence of output/classifier, sample-hand semantics.

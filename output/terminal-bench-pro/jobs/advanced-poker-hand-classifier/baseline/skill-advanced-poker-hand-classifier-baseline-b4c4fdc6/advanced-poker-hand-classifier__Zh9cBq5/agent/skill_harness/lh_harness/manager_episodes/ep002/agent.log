@@ -1,0 +1,80 @@
+role=manager
+status=done
+duration_ms=15201
+
+assistant output:
+Current task state:
+- Completed: Environment discovery of `/app` (round_001): `/app` holds exactly three root-level JSON arrays — `hand1.json` = ["AS","KS","QS","JS","10S"], `hand2.json` = ["7H","7D","7C","JK","JK"], `hand3.json` = ["9C","9D","4H","4S","4C"] — all length 5, all standard encoding. `/app/poker_results.txt` does not exist. No classifier (*.py/*.sh/*.js) and no test harness exist anywhere (round_001). Semantic spot-checks confirmed: hand1 = Royal Flush in Spades 9.40000; hand3 = 4s full of 9s 6.00409 (round_001).
+- Incomplete: The whole deliverable — classifier implementation, wild-card logic (JK/JR/JB/W[n]), exact Part B scoring, Part A dual encoding, Part D validation, and the final `/app/poker_results.txt`.
+- Blockers/Risks: The authoritative input-set identity is unresolved. round_001 auditor found `/protected/test_data/` with 31 additional JSON files (`hand4`–`hand23` plus edge cases `hand_all_wild`, `hand_jr_invalid`, `hand_jb_invalid`, `hand_w5_constraint`, `hand_duplicate`, `hand_empty`, `hand_too_few`, `hand_too_many`, `hand_invalid_card`, `hand_royal_wild`, `hand_ace_low_wild`). The executor's "exactly 3 files / 3 expected lines" conclusion was explicitly rejected as unsupported; independent evidence suggests a union of 34 inputs (disjoint hand numbering 1–3 vs 4–23+edge cases, and the spec-mandated edge cases exist only in `/protected`). Whether `/protected/test_data` is authoritative or a decoy is unverified (round_001). hand2's Part F example is internally contradictory, so its literal text is not a trustworthy target (round_001).
+- Untrusted/Do not reuse: The "exactly 3 files / 3 expected lines" discovery conclusion (round_001, explicitly rejected). Any assumption that only `/app` holds inputs. All facts about `/protected/test_data` contents beyond their filenames are unverified. No classifier or output file may be assumed.
+
+Task contract:
+- Real target state: `/app/poker_results.txt` exists and contains exactly one line per authoritative input hand JSON file, in the format `{filename}|{ranking_name}|{score}|{best_hand}`. Valid hands: correct ranking name, exact 7-character Part B score, and the five substituted cards in standard rank+suit notation (wild tokens replaced by what they became). Invalid hands: `{filename}|invalid|0.00000|error: {reason}` per Part D.
+- Authoritative inputs: The real hand JSON files whose identity is still being resolved. Confirmed present: `/app/hand1.json`, `hand2.json`, `hand3.json` (round_001). Provisionally discovered but not yet confirmed authoritative: the 31 files under `/protected/test_data/` (round_001). Their contents are unverified; do not fabricate inputs.
+- State carrier: `/app/poker_results.txt` as consumed downstream. Stdout or a terminal transcript is not completion.
+- State-production process: A real classifier implementing Parts A–E, executed over the resolved authoritative input set, writing the results file by normal program execution.
+- Commit/persistence boundary: The results file must be written to `/app/poker_results.txt` and its final content read back and evidenced.
+- Candidate-selection and contamination boundary: If both `/app` and `/protected/test_data` inputs are authoritative, the output must contain one line per file across the union; prove `/app/poker_results.txt` corresponds to the complete, correct resolved input set and remove/overwrite stale candidates.
+- Acceptance constraints (from the request):
+  - Exact output path `/app/poker_results.txt` (Part C). Verify file exists there. Blocking.
+  - One line per authoritative input JSON file, four pipe-separated fields (Part C). Verify line count and fields match the resolved input set. Blocking.
+  - Exact score formats per Part B (10.RRRR0, 9.S0000, 8.HHHHS, 7.RRRRK, 6.TTTPP, 5.ABCDE, 4.HHHH0, 3.TTTK1K2, 2.HHLLKK, 1.PPKKK, 0.ABCDE). Blocking.
+  - All Part D invalid conditions produce `invalid|0.00000|error: {reason}`. Blocking.
+  - Wild substitution output shows substituted cards, not wild tokens (Part C). Blocking.
+  - Both encodings auto-detected (Part A). Blocking.
+  - Wild optimization priority: suit priority, natural over substituted, lexicographic determinism (Part E). Blocking.
+- Acceptable evidence: Final saved `/app/poker_results.txt` content checked line by line against the real resolved inputs, plus spot-checks on the Part F samples and on the edge-case inputs.
+- Unacceptable shortcuts: Hardcoding outputs by filename; writing results without running a real classifier; inventing input files; treating stdout as the deliverable; omitting `/protected/test_data` inputs if they are authoritative.
+
+Dependency assessment:
+- Target state: Final `/app/poker_results.txt` over the fully resolved authoritative input set.
+- State creator: CLI (classifier implementation, execution, file write).
+- Satisfied prerequisites: `/app` input contents known; absence of existing classifier/output known; semantic behavior of hand1/hand3 known (round_001).
+- Unsatisfied prerequisites: Authoritative input-set identity — specifically whether `/protected/test_data/*.json` is authoritative (union, 34 lines) or a decoy (3 lines). Also unverified: contents/format of `/protected/test_data` files (encoding mix, validation-rule violations), and the correct resolution of the contradictory hand2 Part F example.
+- Routing rationale: The dominant next change is read-only CLI investigation to inventory `/protected/test_data`, resolve the union-vs-decoy question from evidence, and capture per-file contents/encodings. This is nonvisual diagnostic work, so it routes to CLI, not GUI. It is a genuine prerequisite: implementing against the wrong input set would produce a contract-violating deliverable.
+
+Next: cli
+Task: Read-only inventory and identity resolution of the authoritative input set. Enumerate `/protected/test_data/` explicitly (all `*.json`), listing exact filenames and full parsed contents for each; confirm what `/app` contains; determine from evidence whether `/protected/test_data` is authoritative test data or a decoy (look for any instructions/README/runner/config that designates the input directory or expected output, and record exactly what you find). Do not modify, create, or delete any files, and do not author or run the classifier. Also capture the resolved interpretation of the hand2 Part F example (a spec contradiction) for the manager to adjudicate, rather than treating its literal text as a target.
+Acceptance criteria: A complete, exact list of all input JSON files with full contents; a verified statement of which directory (or union) is authoritative with the concrete evidence for that conclusion; the total expected output line count; a note of any encoding (standard vs numeric) observed and any file that violates a Part D structural precondition; confirmation that no file was written and no classifier was executed; and the hand2 ambiguity recorded for manager decision.
+Related audit reports: round_001 — because it is the only audit; it established the `/app` contents, absence of output/classifier, the discovery of `/protected/test_data` (31 files), and explicitly rejected the "exactly 3 files / 3 lines" conclusion as the unresolved input-set question this round must settle.
+Related audited state: `/app` has `hand1.json`/`hand2.json`/`hand3.json` as root JSON arrays of length 5 in standard encoding; `/app/poker_results.txt` does not exist; no classifier or harness exists (round_001). `/protected/test_data` contains `hand4`–`hand23` plus named edge cases (filenames only; contents unverified) (round_001).
+Boundaries: Read-only only. Do not write, create, delete, or edit any file; do not write `/app/poker_results.txt`; do not author or execute a classifier; do not fabricate or infer missing inputs. Paths under `.harness_skill/orchestration` are harness bookkeeping and out of scope.
+
+Current task state:
+- Completed: Environment discovery of `/app` (round_001): `/app` holds exactly three root-level JSON arrays — `hand1.json` = ["AS","KS","QS","JS","10S"], `hand2.json` = ["7H","7D","7C","JK","JK"], `hand3.json` = ["9C","9D","4H","4S","4C"] — all length 5, all standard encoding. `/app/poker_results.txt` does not exist. No classifier (*.py/*.sh/*.js) and no test harness exist anywhere (round_001). Semantic spot-checks confirmed: hand1 = Royal Flush in Spades 9.40000; hand3 = 4s full of 9s 6.00409 (round_001).
+- Incomplete: The whole deliverable — classifier implementation, wild-card logic (JK/JR/JB/W[n]), exact Part B scoring, Part A dual encoding, Part D validation, and the final `/app/poker_results.txt`.
+- Blockers/Risks: The authoritative input-set identity is unresolved. round_001 auditor found `/protected/test_data/` with 31 additional JSON files (`hand4`–`hand23` plus edge cases `hand_all_wild`, `hand_jr_invalid`, `hand_jb_invalid`, `hand_w5_constraint`, `hand_duplicate`, `hand_empty`, `hand_too_few`, `hand_too_many`, `hand_invalid_card`, `hand_royal_wild`, `hand_ace_low_wild`). The executor's "exactly 3 files / 3 expected lines" conclusion was explicitly rejected as unsupported; independent evidence suggests a union of 34 inputs (disjoint hand numbering 1–3 vs 4–23+edge cases, and the spec-mandated edge cases exist only in `/protected`). Whether `/protected/test_data` is authoritative or a decoy is unverified (round_001). hand2's Part F example is internally contradictory, so its literal text is not a trustworthy target (round_001).
+- Untrusted/Do not reuse: The "exactly 3 files / 3 expected lines" discovery conclusion (round_001, explicitly rejected). Any assumption that only `/app` holds inputs. All facts about `/protected/test_data` contents beyond their filenames are unverified. No classifier or output file may be assumed.
+
+Task contract:
+- Real target state: `/app/poker_results.txt` exists and contains exactly one line per authoritative input hand JSON file, in the format `{filename}|{ranking_name}|{score}|{best_hand}`. Valid hands: correct ranking name, exact 7-character Part B score, and the five substituted cards in standard rank+suit notation (wild tokens replaced by what they became). Invalid hands: `{filename}|invalid|0.00000|error: {reason}` per Part D.
+- Authoritative inputs: The real hand JSON files whose identity is still being resolved. Confirmed present: `/app/hand1.json`, `hand2.json`, `hand3.json` (round_001). Provisionally discovered but not yet confirmed authoritative: the 31 files under `/protected/test_data/` (round_001). Their contents are unverified; do not fabricate inputs.
+- State carrier: `/app/poker_results.txt` as consumed downstream. Stdout or a terminal transcript is not completion.
+- State-production process: A real classifier implementing Parts A–E, executed over the resolved authoritative input set, writing the results file by normal program execution.
+- Commit/persistence boundary: The results file must be written to `/app/poker_results.txt` and its final content read back and evidenced.
+- Candidate-selection and contamination boundary: If both `/app` and `/protected/test_data` inputs are authoritative, the output must contain one line per file across the union; prove `/app/poker_results.txt` corresponds to the complete, correct resolved input set and remove/overwrite stale candidates.
+- Acceptance constraints (from the request):
+  - Exact output path `/app/poker_results.txt` (Part C). Verify file exists there. Blocking.
+  - One line per authoritative input JSON file, four pipe-separated fields (Part C). Verify line count and fields match the resolved input set. Blocking.
+  - Exact score formats per Part B (10.RRRR0, 9.S0000, 8.HHHHS, 7.RRRRK, 6.TTTPP, 5.ABCDE, 4.HHHH0, 3.TTTK1K2, 2.HHLLKK, 1.PPKKK, 0.ABCDE). Blocking.
+  - All Part D invalid conditions produce `invalid|0.00000|error: {reason}`. Blocking.
+  - Wild substitution output shows substituted cards, not wild tokens (Part C). Blocking.
+  - Both encodings auto-detected (Part A). Blocking.
+  - Wild optimization priority: suit priority, natural over substituted, lexicographic determinism (Part E). Blocking.
+- Acceptable evidence: Final saved `/app/poker_results.txt` content checked line by line against the real resolved inputs, plus spot-checks on the Part F samples and on the edge-case inputs.
+- Unacceptable shortcuts: Hardcoding outputs by filename; writing results without running a real classifier; inventing input files; treating stdout as the deliverable; omitting `/protected/test_data` inputs if they are authoritative.
+
+Dependency assessment:
+- Target state: Final `/app/poker_results.txt` over the fully resolved authoritative input set.
+- State creator: CLI (classifier implementation, execution, file write).
+- Satisfied prerequisites: `/app` input contents known; absence of existing classifier/output known; semantic behavior of hand1/hand3 known (round_001).
+- Unsatisfied prerequisites: Authoritative input-set identity — specifically whether `/protected/test_data/*.json` is authoritative (union, 34 lines) or a decoy (3 lines). Also unverified: contents/format of `/protected/test_data` files (encoding mix, validation-rule violations), and the correct resolution of the contradictory hand2 Part F example.
+- Routing rationale: The dominant next change is read-only CLI investigation to inventory `/protected/test_data`, resolve the union-vs-decoy question from evidence, and capture per-file contents/encodings. This is nonvisual diagnostic work, so it routes to CLI, not GUI. It is a genuine prerequisite: implementing against the wrong input set would produce a contract-violating deliverable.
+
+Next: cli
+Task: Read-only inventory and identity resolution of the authoritative input set. Enumerate `/protected/test_data/` explicitly (all `*.json`), listing exact filenames and full parsed contents for each; confirm what `/app` contains; determine from evidence whether `/protected/test_data` is authoritative test data or a decoy (look for any instructions/README/runner/config that designates the input directory or expected output, and record exactly what you find). Do not modify, create, or delete any files, and do not author or run the classifier. Also capture the resolved interpretation of the hand2 Part F example (a spec contradiction) for the manager to adjudicate, rather than treating its literal text as a target.
+Acceptance criteria: A complete, exact list of all input JSON files with full contents; a verified statement of which directory (or union) is authoritative with the concrete evidence for that conclusion; the total expected output line count; a note of any encoding (standard vs numeric) observed and any file that violates a Part D structural precondition; confirmation that no file was written and no classifier was executed; and the hand2 ambiguity recorded for manager decision.
+Related audit reports: round_001 — because it is the only audit; it established the `/app` contents, absence of output/classifier, the discovery of `/protected/test_data` (31 files), and explicitly rejected the "exactly 3 files / 3 lines" conclusion as the unresolved input-set question this round must settle.
+Related audited state: `/app` has `hand1.json`/`hand2.json`/`hand3.json` as root JSON arrays of length 5 in standard encoding; `/app/poker_results.txt` does not exist; no classifier or harness exists (round_001). `/protected/test_data` contains `hand4`–`hand23` plus named edge cases (filenames only; contents unverified) (round_001).
+Boundaries: Read-only only. Do not write, create, delete, or edit any file; do not write `/app/poker_results.txt`; do not author or execute a classifier; do not fabricate or infer missing inputs. Paths under `.harness_skill/orchestration` are harness bookkeeping and out of scope.

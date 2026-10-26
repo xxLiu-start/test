@@ -1,0 +1,28 @@
+Terminal output log: /data0/liuxule/project/LHH/LongHorizon-Harness/output/terminal-bench-pro/jobs/console_logs/train-20261026-181302-rs4Nrn.log
+  1/1 Mean: 0.000 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 0:02:26 0:00:00
+terminal-bench-pro • lh-harness-skill-learning • deepseek-v4.1-flash
+┏━━━━━━━━┳━━━━━━━━━━━━┳━━━━━━━┓
+┃ Trials ┃ Exceptions ┃  Mean ┃
+┡━━━━━━━━╇━━━━━━━━━━━━╇━━━━━━━┩
+│      1 │          0 │ 0.000 │
+└────────┴────────────┴───────┘
+
+┏━━━━━━━━┳━━━━━━━┓
+┃ Reward ┃ Count ┃
+┡━━━━━━━━╇━━━━━━━┩
+│ 0.0    │     1 │
+└────────┴───────┘
+
+Job Info
+Total runtime: 2m 26s
+Results written to 
+/data0/liuxule/project/LHH/LongHorizon-Harness/output/terminal-bench-pro/jobs/advanced-poker-hand-c
+lassifier/baseline/skill-advanced-poker-hand-classifier-baseline-e70f2fe2/result.json
+Inspect results by running `harbor view 
+/data0/liuxule/project/LHH/LongHorizon-Harness/output/terminal-bench-pro/jobs/advanced-poker-hand-c
+lassifier/baseline`
+Share results by running `harbor upload 
+/data0/liuxule/project/LHH/LongHorizon-Harness/output/terminal-bench-pro/jobs/advanced-poker-hand-c
+lassifier/baseline/skill-advanced-poker-hand-classifier-baseline-e70f2fe2`
+
+{"task": "advanced-poker-hand-classifier", "training_dataset": "/data0/liuxule/project/LHH/LongHorizon-Harness/train_dataset/terminal-bench-pro", "baseline_status": "incomplete", "accepted": false, "reason": "no candidate proposed"}

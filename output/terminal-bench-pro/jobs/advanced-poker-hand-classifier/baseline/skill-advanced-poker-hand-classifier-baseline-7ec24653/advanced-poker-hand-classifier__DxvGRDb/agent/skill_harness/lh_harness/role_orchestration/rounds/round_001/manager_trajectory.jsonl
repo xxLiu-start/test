@@ -1,0 +1,2 @@
+{"kind": "session", "model": "deepseek-v4.1-flash", "cwd": "/app", "mcp_servers": [], "tool_count": 14, "step_num": 1}
+{"kind": "result", "text": "API Error: 502 OpenAI bridge failed: ValueError: unsupported message role: system. This is a server-side issue, usually temporary — try again in a moment. If it persists, check your inference gateway (127.0.0.1:44407).", "is_error": true, "duration_ms": 183429, "num_turns": 1, "cost_usd": 0, "step_num": 2}

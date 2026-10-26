@@ -42,6 +42,8 @@ DEFAULT_MAX_ROUNDS = 25
 
 RoleNextStep = Literal["gui", "cli", "done", "blocked", "invalid", "ask"]
 PromptLanguage = Literal["en", "zh"]
+SkillBenchmarkId = Literal["generic", "weavebench", "osworld_v2", "terminal_bench_2_1"]
+InteractionMode = Literal["gui", "cli", "hybrid"]
 
 
 @dataclass
@@ -124,8 +126,25 @@ class HarnessConfig:
     # English is the production default; Chinese remains available for
     # OSWorldv2-compatible role prompts and operator-facing control headers.
     prompt_language: PromptLanguage = "en"
+    # Explicit opt-in; the bank is shared across runs, while route records live
+    # under each run's log directory.
+    skill_bank_path: str | None = None
+    skill_token_budget: int = 2000
+    skill_reward_reference_tokens: int = 100_000
+    skill_update_enabled: bool = True
+    skill_benchmark_id: SkillBenchmarkId = "generic"
+    skill_interaction_mode: InteractionMode = "hybrid"
+    skill_dataset_id: str = ""
     # None preserves the historical manager-derived 60-180 second reply budget.
     final_response_budget: EpisodeBudget | None = None
+
+    def __post_init__(self) -> None:
+        if self.skill_bank_path and self.prompt_language != "en":
+            raise ValueError("SkillBank runs require English prompts (--prompt-language en)")
+        if self.skill_benchmark_id not in ("generic", "weavebench", "osworld_v2", "terminal_bench_2_1"):
+            raise ValueError("invalid Skill benchmark ID")
+        if self.skill_interaction_mode not in ("gui", "cli", "hybrid"):
+            raise ValueError("invalid Skill interaction mode")
 
 
 def audit_report_to_dict(report: AuditReport) -> dict[str, Any]:

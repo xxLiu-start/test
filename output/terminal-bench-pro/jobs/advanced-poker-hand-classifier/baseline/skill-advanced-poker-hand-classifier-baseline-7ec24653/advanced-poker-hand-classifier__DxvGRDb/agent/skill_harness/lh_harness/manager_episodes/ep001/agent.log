@@ -1,0 +1,8 @@
+role=manager
+status=error
+duration_ms=185230
+
+assistant output:
+API Error: 502 OpenAI bridge failed: ValueError: unsupported message role: system. This is a server-side issue, usually temporary — try again in a moment. If it persists, check your inference gateway (127.0.0.1:44407).
+
+API Error: 502 OpenAI bridge failed: ValueError: unsupported message role: system. This is a server-side issue, usually temporary — try again in a moment. If it persists, check your inference gateway (127.0.0.1:44407).

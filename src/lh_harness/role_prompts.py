@@ -50,8 +50,11 @@ def build_role_manager_prompt(
     round_budget: int | None = None,
     language: str = "en",
     max_history_chars: int = 36_000,
+    skill_context: str = "",
 ) -> str:
     lang = normalize_prompt_language(language)
+    if skill_context and lang != "en":
+        raise ValueError("Skill guidance supports English prompts only")
     configured_budget = max(round_index, int(round_budget or round_index))
     remaining_rounds = max(1, configured_budget - round_index + 1)
     auditor_reports = format_verified_intermediate_context(
@@ -84,6 +87,8 @@ Historical auditor reports by round (authority for trusted intermediate state):
 
 Harness management feedback (not an audit; only for protocol/completion correction):
 {harness_feedback or "(No harness feedback.)"}
+
+{skill_context.strip()}
 
 Round budget:
 - Current management round: {round_index}
@@ -139,8 +144,11 @@ def build_role_executor_prompt(
     related_auditor_reports: str = "",
     workspace_path: str = "",
     language: str = "en",
+    skill_context: str = "",
 ) -> str:
     lang = normalize_prompt_language(language)
+    if skill_context and lang != "en":
+        raise ValueError("Skill guidance supports English prompts only")
     gui = next_step == MANAGER_NEXT_GUI
     role_name = "GUI/visual" if gui and lang == "en" else "CLI/non-GUI" if lang == "en" else "GUI/视觉" if gui else "CLI/非 GUI"
     role_instructions = GUI_EXECUTOR_INSTRUCTIONS[lang] if gui else CLI_EXECUTOR_INSTRUCTIONS[lang]
@@ -175,6 +183,8 @@ Assigned {role_name} subtask contract:
 
 Related auditor reports selected by round id:
 {related_auditor_reports.strip() or "(The manager referenced no related auditor report.)"}
+
+{skill_context.strip()}
 
 Complete only this subtask. Treat audited state and the stable contract as the trusted semantic boundary. Do not repeat audited work or use suspect, violating, fabricated, untrusted, or deleted artifacts. If context is missing or another dominant task type is required, stop and report it; do not guess or globally replan.
 """
@@ -225,8 +235,11 @@ def build_role_auditor_prompt(
     workspace_path: str = "",
     max_executor_output_chars: int = 24_000,
     language: str = "en",
+    skill_context: str = "",
 ) -> str:
     lang = normalize_prompt_language(language)
+    if skill_context and lang != "en":
+        raise ValueError("Skill guidance supports English prompts only")
     gui = next_step == MANAGER_NEXT_GUI
     role_name = "GUI/visual" if gui and lang == "en" else "CLI/non-GUI" if lang == "en" else "GUI/视觉" if gui else "CLI/非 GUI"
     role_instructions = GUI_AUDITOR_INSTRUCTIONS[lang] if gui else CLI_AUDITOR_INSTRUCTIONS[lang]
@@ -260,6 +273,8 @@ Executor natural-language output:
 
 Related auditor reports (background, never a substitute for direct read-only audit):
 {related_auditor_reports.strip() or "(The manager referenced no related auditor report.)"}
+
+{skill_context.strip()}
 
 {AUDITOR_CONTRACT_BACKCHECK[lang].strip()}
 

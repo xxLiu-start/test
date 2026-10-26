@@ -24,6 +24,7 @@ from .environment.remote_files import ensure_remote_dir, write_remote_text
 from .runtime_signals import hard_signal_labels
 from .provider_errors import classify_agent_runtime_failure
 from .trajectory_artifacts import persist_trajectory_artifacts
+from .skill_learning import SkillBank, SkillSession, Replay
 from .role_prompts import (
     MANAGER_NEXT_BLOCKED,
     MANAGER_NEXT_CLI,
@@ -74,6 +75,31 @@ _MAX_SAVED_TRAJECTORY_BYTES = 16 * 1024 * 1024
 _MAX_FAILURE_REPORT_BYTES = 1 * 1024 * 1024
 _MAX_FAILURE_EVENTS_BYTES = 4 * 1024 * 1024
 _MAX_FAILURE_EVENT_RECORDS = 50_000
+
+
+def _skill_routing_brief(
+    *, task_goal: str, current_state: str, rounds: list[ManagedRound],
+    related_evidence: str = "", executor_output: str = "",
+) -> dict[str, Any]:
+    """Map already recorded MEA state to the compact shared Router schema."""
+    evidence: list[dict[str, str]] = []
+    for item in rounds[-2:]:
+        if item.auditor_report:
+            evidence.append({
+                "type": "audit", "summary": item.auditor_report[:1800],
+                "source_ref": f"round_{item.round_index:03d}/auditor_report.txt",
+            })
+    if related_evidence:
+        evidence.append({"type": "handoff", "summary": related_evidence[:1800], "source_ref": "selected_auditor_reports"})
+    if executor_output:
+        evidence.append({"type": "handoff", "summary": executor_output[:2400], "source_ref": "current_round/executor_output.txt"})
+    return {
+        "task_goal": task_goal[:3000],
+        "current_state": current_state[:2500],
+        "recent_actions": [item.plan_text[:500] for item in rounds[-2:]],
+        "evidence": evidence,
+        "task_status": "running",
+    }
 
 
 def _invalid_completion_feedback(language: str) -> str:
@@ -183,6 +209,9 @@ async def _run_impl(
     pending_instructions: Callable[[], list[str]] | None = None,
     progress: Callable[[str, dict[str, Any]], None] | None = None,
     resume: bool = False,
+    skill_replay: Replay | None = None,
+    skill_candidate: dict[str, Any] | None = None,
+    skill_router_prompt_override: str | None = None,
     _run_progress: _RunProgress | None = None,
 ) -> dict[str, Any]:
     """Run the generic LongHorizon-Harness four-role management loop.
@@ -257,6 +286,24 @@ async def _run_impl(
     _ensure_dir_nofollow(rounds_dir)
     events_path = role_dir / "events.jsonl"
     started = time.monotonic()
+
+    skill_session = None
+    if config.skill_bank_path:
+        bank = SkillBank.load(config.skill_bank_path)
+        skill_session = SkillSession(
+            bank=bank,
+            language=config.prompt_language,
+            agent=cli_auditor_agent,
+            env=env,
+            budget=auditor_budget,
+            log_dir=role_dir,
+            token_budget=config.skill_token_budget,
+            candidate=skill_candidate,
+            router_prompt_override=skill_router_prompt_override,
+            benchmark_id=config.skill_benchmark_id,
+            interaction_mode=config.skill_interaction_mode,
+            dataset_id=config.skill_dataset_id,
+        )
 
     await _ensure_remote_layout(env, config)
 
@@ -376,13 +423,15 @@ async def _run_impl(
         # Instructions carried over from the end-of-round human gate (queued
         # operator notes and/or an approval's free-form input) are injected into
         # this round's manager prompt.
+        human_prompt_suffix = ""
         if gate.carryover_instructions:
             instruction_heading = (
                 "Operator instructions injected through the dashboard (high priority; incorporate them this round):"
                 if config.prompt_language == "en"
                 else "人工补充指令（操作员通过 dashboard 注入，优先级高，请纳入本轮任务管理）:"
             )
-            manager_prompt += f"\n\n{instruction_heading}\n{gate.carryover_instructions}\n"
+            human_prompt_suffix = f"\n\n{instruction_heading}\n{gate.carryover_instructions}\n"
+            manager_prompt += human_prompt_suffix
             _write_local(round_dir / "human_instructions.txt", gate.carryover_instructions)
             _append_event(
                 events_path,
@@ -390,6 +439,21 @@ async def _run_impl(
                 {"round": round_index, "chars": len(gate.carryover_instructions)},
             )
             gate.carryover_instructions = ""
+
+        if skill_session is not None:
+            context = await skill_session.route(
+                "manager", manager_prompt, round_index,
+                _skill_routing_brief(task_goal=task, current_state=current_task_state, rounds=rounds),
+            )
+            if context:
+                manager_prompt = build_role_manager_prompt(
+                    task=task, rounds=rounds, round_index=round_index,
+                    task_state=current_task_state, task_contract=current_task_contract,
+                    round_budget=gate.round_budget, language=config.prompt_language,
+                    max_history_chars=config.role_history_chars, skill_context=context,
+                ) + human_prompt_suffix
+
+            skill_session.record_injected_prompt("manager", round_index, manager_prompt)
 
         _write_local(round_dir / "manager_input.txt", manager_prompt)
         await _write_remote_round_text(env, config, round_index, "manager_input.txt", manager_prompt)
@@ -407,6 +471,8 @@ async def _run_impl(
             manager_budget,
             live_trajectory_path=str(round_dir / "manager_raw_trajectory.jsonl"),
         )
+        if skill_session is not None:
+            skill_session.record_episode(manager_result)
         _save_role_result(
             round_dir,
             "manager",
@@ -649,6 +715,27 @@ async def _run_impl(
             workspace_path=config.workspace_path,
             language=config.prompt_language,
         )
+        if skill_session is not None:
+            context = await skill_session.route(
+                "gui_executor" if next_step == MANAGER_NEXT_GUI else "cli_executor",
+                executor_prompt, round_index,
+                _skill_routing_brief(
+                    task_goal=plan_text, current_state=current_task_state,
+                    rounds=rounds, related_evidence=related_auditor_reports,
+                ),
+            )
+            if context:
+                executor_prompt = build_role_executor_prompt(
+                    task=task, plan_text=plan_text, next_step=next_step,
+                    task_state=current_task_state, task_contract=current_task_contract,
+                    related_auditor_reports=related_auditor_reports,
+                    workspace_path=config.workspace_path, language=config.prompt_language,
+                    skill_context=context,
+                )
+            skill_session.record_injected_prompt(
+                "gui_executor" if next_step == MANAGER_NEXT_GUI else "cli_executor",
+                round_index, executor_prompt,
+            )
         _write_local(round_dir / "executor_prompt.txt", executor_prompt)
         await _write_remote_round_text(env, config, round_index, "executor_prompt.txt", executor_prompt)
         _append_event(
@@ -665,6 +752,8 @@ async def _run_impl(
             executor_budget,
             live_trajectory_path=str(round_dir / "executor_raw_trajectory.jsonl"),
         )
+        if skill_session is not None:
+            skill_session.record_episode(executor_result)
         executor_episode_root = log_dir / (
             "gui_executor_episodes" if next_step == MANAGER_NEXT_GUI else "cli_executor_episodes"
         )
@@ -789,6 +878,30 @@ async def _run_impl(
             max_executor_output_chars=config.auditor_output_chars,
             language=config.prompt_language,
         )
+        if skill_session is not None:
+            context = await skill_session.route(
+                "gui_auditor" if next_step == MANAGER_NEXT_GUI else "cli_auditor",
+                auditor_prompt, round_index,
+                _skill_routing_brief(
+                    task_goal=plan_text, current_state=current_task_state,
+                    rounds=rounds, related_evidence=related_auditor_reports,
+                    executor_output=executor_output,
+                ),
+            )
+            if context:
+                auditor_prompt = build_role_auditor_prompt(
+                    task=task, plan_text=plan_text, executor_output=executor_output,
+                    next_step=next_step, task_state=current_task_state,
+                    task_contract=current_task_contract,
+                    related_auditor_reports=related_auditor_reports,
+                    workspace_path=config.workspace_path,
+                    max_executor_output_chars=config.auditor_output_chars,
+                    language=config.prompt_language, skill_context=context,
+                )
+            skill_session.record_injected_prompt(
+                "gui_auditor" if next_step == MANAGER_NEXT_GUI else "cli_auditor",
+                round_index, auditor_prompt,
+            )
         _write_local(round_dir / "auditor_input.txt", auditor_prompt)
         await _write_remote_round_text(env, config, round_index, "auditor_input.txt", auditor_prompt)
         _append_event(
@@ -805,6 +918,8 @@ async def _run_impl(
             auditor_budget,
             live_trajectory_path=str(round_dir / "auditor_raw_trajectory.jsonl"),
         )
+        if skill_session is not None:
+            skill_session.record_episode(auditor_result)
         auditor_episode_root = log_dir / (
             "gui_auditor_episodes" if next_step == MANAGER_NEXT_GUI else "cli_auditor_episodes"
         )
@@ -996,6 +1111,29 @@ async def _run_impl(
         final_response=gate.final_response,
         failure_reason=gate.failure_reason,
     )
+    if skill_session is not None:
+        try:
+            if not config.skill_update_enabled:
+                final["skill_learning"] = {
+                    "mode": "evaluation", "task_tokens": skill_session.total_tokens(),
+                    "token_usage_missing": skill_session.total_tokens() is None,
+                }
+            elif resume:
+                final["skill_learning"] = {"validation": "not_comparable_resume", "token_usage_missing": True}
+            elif skill_candidate is not None or skill_router_prompt_override is not None:
+                final["skill_learning"] = {
+                    "task_tokens": skill_session.total_tokens(),
+                    "token_usage_missing": skill_session.total_tokens() is None,
+                    "mode": "candidate_validation" if skill_candidate else "router_validation",
+                }
+            else:
+                final["skill_learning"] = await skill_session.finish(
+                    final, replay=skill_replay,
+                    reference_tokens=config.skill_reward_reference_tokens,
+                )
+        except Exception as exc:
+            logger.exception("Skill learning failed after task completion")
+            final["skill_learning"] = {"learning_error": str(exc)}
     _write_local(role_dir / "report.json", json.dumps(final, ensure_ascii=False, indent=2) + "\n")
     _write_local(log_dir / "report.json", json.dumps(final, ensure_ascii=False, indent=2) + "\n")
     transcript = format_management_history(rounds, include_empty=True, max_chars=200_000)
@@ -1791,6 +1929,7 @@ def _episode_status(result: EpisodeResult) -> dict[str, Any]:
         "agent_done": metadata.get("agent_done"),
         "exit_code": metadata.get("exit_code"),
         "runtime_signals": metadata.get("runtime_signals"),
+        "verifier_workspace_mutation_detected": metadata.get("verifier_workspace_mutation_detected"),
     }
 
 
